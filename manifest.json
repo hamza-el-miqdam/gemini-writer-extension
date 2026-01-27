@@ -18,6 +18,9 @@
             ],
             "js": [
                 "content.js"
+            ],
+            "css": [
+                "toast.css"
             ]
         }
     ],

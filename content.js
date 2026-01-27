@@ -19,7 +19,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             document.execCommand("insertText", false, request.replacement);
         }
         else {
-            alert("Could not replace text automatically. Here is the corrected version:\n\n" + request.replacement);
+            showToast("Could not replace text automatically. Here is the corrected version:\n\n" + request.replacement, 10000);
         }
+    } else if (request.action === "showToast") {
+        showToast(request.message);
     }
 });
+
+function showToast(message, duration = 4000) {
+    let toast = document.getElementById("gemini-toast-container");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "gemini-toast-container";
+        document.body.appendChild(toast);
+    }
+
+    // Ensure newlines are respected
+    toast.style.whiteSpace = "pre-line";
+    toast.innerText = message;
+    toast.classList.add("show");
+
+    if (toast.hideTimeout) clearTimeout(toast.hideTimeout);
+
+    if (duration > 0) {
+        toast.hideTimeout = setTimeout(() => {
+            toast.classList.remove("show");
+        }, duration);
+    }
+}

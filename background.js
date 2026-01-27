@@ -104,9 +104,8 @@ async function callGemini(text, styleInstruction, key) {
 }
 
 function alertUser(tabId, message) {
-    chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        func: (msg) => alert(msg),
-        args: [message]
+    chrome.tabs.sendMessage(tabId, {
+        action: "showToast",
+        message: message
     });
 }
