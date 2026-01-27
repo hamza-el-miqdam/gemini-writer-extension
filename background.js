@@ -1,3 +1,5 @@
+const requestCache = new Map();
+
 // 1. Create the Context Menus on installation
 chrome.runtime.onInstalled.addListener(() => {
     // Parent Menu
@@ -78,6 +80,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 // Helper: Call Google Gemini API
 async function callGemini(text, styleInstruction, key) {
+    const cacheKey = JSON.stringify({ text, styleInstruction });
+    if (requestCache.has(cacheKey)) {
+        return requestCache.get(cacheKey);
+    }
+
     // Make sure to use a valid model ID (gemini-1.5-pro or gemini-pro if 3 is not available)
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`;
 
@@ -100,7 +107,10 @@ async function callGemini(text, styleInstruction, key) {
     const data = await response.json();
 
     if (data.error) throw new Error(data.error.message);
-    return data.candidates[0].content.parts[0].text.trim();
+    const result = data.candidates[0].content.parts[0].text.trim();
+
+    requestCache.set(cacheKey, result);
+    return result;
 }
 
 function alertUser(tabId, message) {
