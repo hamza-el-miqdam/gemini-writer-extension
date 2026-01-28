@@ -4,14 +4,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         // 1. Check if it's a standard input or textarea
         if (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA") {
-            const start = activeElement.selectionStart;
-            const end = activeElement.selectionEnd;
-
             // Replace only the selected part
-            const currentValue = activeElement.value;
-            const newValue = currentValue.substring(0, start) + request.replacement + currentValue.substring(end);
-
-            activeElement.value = newValue;
+            activeElement.setRangeText(request.replacement);
         }
         // 2. Check if it's a contenteditable div (like in some emails or modern editors)
         else if (activeElement.isContentEditable) {
