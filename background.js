@@ -1,16 +1,25 @@
 const requestCache = new Map();
 let cachedApiKey = "";
 
-// Initialize API Key from storage
-chrome.storage.local.get("geminiApiKey", (data) => {
-  if (data.geminiApiKey) {
-    cachedApiKey = data.geminiApiKey;
-  }
-});
+// Helper to get API Key, ensuring it's available even on cold start
+async function getApiKey() {
+  if (cachedApiKey) return cachedApiKey;
 
-// Listen for API Key changes
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === "local" && changes.geminiApiKey) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get("geminiApiKey", (data) => {
+      if (data.geminiApiKey) {
+        cachedApiKey = data.geminiApiKey;
+        resolve(cachedApiKey);
+      } else {
+        resolve("");
+      }
+    });
+  });
+}
+
+// Update Cache on change
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.geminiApiKey) {
     cachedApiKey = changes.geminiApiKey.newValue;
   }
 });
@@ -74,17 +83,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   // Retrieve API Key
   chrome.storage.local.get("geminiApiKey", async (data) => {
-    const apiKey = data.geminiApiKey;
+    const apiKey = await getApiKey();
     if (!apiKey) {
-      alertUser(
-        tab.id,
-        "Please set your API Key in the extension popup first!",
-      );
-      return;
-    }
-
-    // Retrieve API Key from cache
-    if (!cachedApiKey) {
       alertUser(
         tab.id,
         "Please set your API Key in the extension popup first!",
