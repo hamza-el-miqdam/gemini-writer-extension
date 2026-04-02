@@ -1,3 +1,5 @@
+let toastContainer = null;
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "replaceText") {
         const activeElement = document.activeElement;
@@ -27,12 +29,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function showToast(message, duration = 4000) {
-    let toast = document.getElementById("gemini-toast-container");
-    if (!toast) {
-        toast = document.createElement("div");
-        toast.id = "gemini-toast-container";
-        document.body.appendChild(toast);
+    if (!toastContainer) {
+        toastContainer = document.getElementById("gemini-toast-container");
+        if (!toastContainer) {
+            toastContainer = document.createElement("div");
+            toastContainer.id = "gemini-toast-container";
+            document.body.appendChild(toastContainer);
+        }
     }
+    const toast = toastContainer;
 
     // Ensure newlines are respected
     toast.style.whiteSpace = "pre-line";
