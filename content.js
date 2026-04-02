@@ -38,18 +38,16 @@ function showToast(message, duration = 4000) {
     }
   }
 
-  const toast = toastContainer;
-
   // Ensure newlines are respected
-  toast.style.whiteSpace = "pre-line";
-  toast.innerText = message;
-  toast.classList.add("show");
+  toastContainer.style.whiteSpace = "pre-line";
+  toastContainer.innerText = message;
+  toastContainer.classList.add("show");
 
-  if (toast.hideTimeout) clearTimeout(toast.hideTimeout);
+  if (toastContainer.hideTimeout) clearTimeout(toastContainer.hideTimeout);
 
   if (duration > 0) {
-    toast.hideTimeout = setTimeout(() => {
-      toast.classList.remove("show");
+    toastContainer.hideTimeout = setTimeout(() => {
+      toastContainer.classList.remove("show");
     }, duration);
   }
 }
