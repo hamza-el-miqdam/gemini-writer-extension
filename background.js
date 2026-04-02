@@ -122,8 +122,9 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 // Helper: Call Google Gemini API
 async function callGemini(text, styleInstruction, key) {
   const cacheKey = JSON.stringify({ text, styleInstruction });
-  if (requestCache.has(cacheKey)) {
-    return requestCache.get(cacheKey);
+  const cacheData = await chrome.storage.session.get(cacheKey);
+  if (cacheData[cacheKey]) {
+    return cacheData[cacheKey];
   }
 
   // Use gemini-1.5-flash as it is faster and better suited for quick text rewriting
@@ -159,7 +160,7 @@ async function callGemini(text, styleInstruction, key) {
 
   const result = candidate.content.parts[0].text.trim();
 
-  requestCache.set(cacheKey, result);
+  await chrome.storage.session.set({ [cacheKey]: result });
   return result;
 }
 
