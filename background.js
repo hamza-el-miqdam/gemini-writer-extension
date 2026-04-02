@@ -76,8 +76,16 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     });
 });
 
+const geminiCache = new Map();
+
 // Helper: Call Google Gemini API
 async function callGemini(text, styleInstruction, key) {
+    const cacheKey = JSON.stringify({ text, styleInstruction });
+    if (geminiCache.has(cacheKey)) {
+        console.log("Returning cached Gemini response");
+        return geminiCache.get(cacheKey);
+    }
+
     // Make sure to use a valid model ID (gemini-1.5-pro or gemini-pro if 3 is not available)
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`;
 
@@ -100,7 +108,9 @@ async function callGemini(text, styleInstruction, key) {
     const data = await response.json();
 
     if (data.error) throw new Error(data.error.message);
-    return data.candidates[0].content.parts[0].text.trim();
+    const result = data.candidates[0].content.parts[0].text.trim();
+    geminiCache.set(cacheKey, result);
+    return result;
 }
 
 function alertUser(tabId, message) {
