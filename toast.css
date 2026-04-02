@@ -1,28 +1,32 @@
 #gemini-toast-container {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #0b57d0; /* Gemini Blue */
-    color: #ffffff;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 2147483647;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s;
-    max-width: 80vw;
-    word-wrap: break-word;
-    text-align: center;
-    cursor: default;
-    user-select: text; /* Allow text selection */
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0b57d0; /* Gemini Blue */
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2147483647;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s;
+  max-width: 80vw;
+  word-wrap: break-word;
+  text-align: center;
+  cursor: default;
+  user-select: text; /* Allow text selection */
 }
 
 #gemini-toast-container.show {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }

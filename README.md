@@ -6,10 +6,10 @@
 
 ## Features
 
-*   **Context Menu Integration**: Easily accessible via right-click on any selected text.
-*   **Smart Replacement**: Automatically replaces selected text in inputs, textareas, and content-editable elements (like email editors).
-*   **Grammar & Style Optimization**: Uses the `gemini-3-flash-preview` model to correct and polish your writing while maintaining a professional yet natural tone.
-*   **Secure API Key Storage**: Your API key is stored locally in your browser.
+- **Context Menu Integration**: Easily accessible via right-click on any selected text.
+- **Smart Replacement**: Automatically replaces selected text in inputs, textareas, and content-editable elements (like email editors).
+- **Grammar & Style Optimization**: Uses the `gemini-3-flash-preview` model to correct and polish your writing while maintaining a professional yet natural tone.
+- **Secure API Key Storage**: Your API key is stored locally in your browser.
 
 ## Installation
 
