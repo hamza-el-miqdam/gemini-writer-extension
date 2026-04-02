@@ -1,4 +1,19 @@
 const requestCache = new Map();
+let cachedApiKey = "";
+
+// Initialize API Key from storage
+chrome.storage.local.get("geminiApiKey", (data) => {
+  if (data.geminiApiKey) {
+    cachedApiKey = data.geminiApiKey;
+  }
+});
+
+// Listen for API Key changes
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === "local" && changes.geminiApiKey) {
+    cachedApiKey = changes.geminiApiKey.newValue;
+  }
+});
 
 // 1. Create the Context Menus on installation
 chrome.runtime.onInstalled.addListener(() => {
@@ -68,12 +83,21 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       return;
     }
 
+    // Retrieve API Key from cache
+    if (!cachedApiKey) {
+      alertUser(
+        tab.id,
+        "Please set your API Key in the extension popup first!",
+      );
+      return;
+    }
+
     try {
       // We pass the specific tone instruction here
       const correctedText = await callGemini(
         selectedText,
         toneInstruction,
-        apiKey,
+        cachedApiKey,
       );
 
       chrome.tabs
