@@ -92,29 +92,45 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       return;
     }
 
-    try {
-      // We pass the specific tone instruction here
-      const correctedText = await callGemini(
-        selectedText,
-        toneInstruction,
-        cachedApiKey,
-      );
+    let maxRetries = 3;
+    let waitTime = 2000;
 
-      chrome.tabs
-        .sendMessage(tab.id, {
-          action: "replaceText",
-          original: selectedText,
-          replacement: correctedText,
-        })
-        .catch((err) =>
-          console.warn(
-            "Could not send message. Try refreshing the web page.",
-            err,
-          ),
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        // We pass the specific tone instruction here
+        const correctedText = await callGemini(
+          selectedText,
+          toneInstruction,
+          cachedApiKey,
         );
-    } catch (error) {
-      console.error(error);
-      alertUser(tab.id, "Error: " + error.message);
+
+        chrome.tabs
+          .sendMessage(tab.id, {
+            action: "replaceText",
+            original: selectedText,
+            replacement: correctedText,
+          })
+          .catch((err) =>
+            console.warn(
+              "Could not send message. Try refreshing the web page.",
+              err,
+            ),
+          );
+        break; // Success, exit retry loop
+      } catch (error) {
+        if (attempt < maxRetries) {
+          alertUser(
+            tab.id,
+            `Request failed, retrying in ${waitTime / 1000} seconds (Attempt ${attempt + 1} of 3)...`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          waitTime *= 2;
+        } else {
+          alertUser(tab.id, "Failed after 3 retries. Please try again later.");
+          console.error(error);
+          throw error;
+        }
+      }
     }
   });
 });
